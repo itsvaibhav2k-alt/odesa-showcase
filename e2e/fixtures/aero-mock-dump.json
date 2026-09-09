@@ -1,0 +1,331 @@
+{
+  "__comment": "Aero legacy backend mock dump, shaped to match Prisma models at /Users/vaibhav/smart-calendar-autopilot-mobile/backend/prisma/schema.prisma (lines 10-490). Fields the Odesa migrator does not map are kept here intentionally so the mapper's drop-unknown path is exercised. All ids use the cuid-like 'c...' prefix Aero emits.",
+  "organizations": [
+    {
+      "id": "cgalaxy000000000000000001",
+      "name": "Galaxy Estates",
+      "createdAt": "2024-06-01T14:20:00.000Z"
+    }
+  ],
+  "properties": [
+    {
+      "id": "cprop00000000000000000001",
+      "orgId": "cgalaxy000000000000000001",
+      "name": "Oakwood Commons",
+      "address": "412 Oakwood Ave, Falls Church, VA 22042",
+      "status": "occupied",
+      "type": "multifamily",
+      "rent": 0,
+      "rentDay": 1,
+      "startMonth": 1,
+      "unitCount": 4,
+      "image": null,
+      "createdAt": "2024-06-03T09:00:00.000Z",
+      "updatedAt": "2025-12-04T17:12:00.000Z"
+    },
+    {
+      "id": "cprop00000000000000000002",
+      "orgId": "cgalaxy000000000000000001",
+      "name": "17th Street Row",
+      "address": "1704 17th Street NW, Washington, DC 20009",
+      "status": "occupied",
+      "type": "garden-style",
+      "rent": 0,
+      "rentDay": 1,
+      "startMonth": 1,
+      "unitCount": 3,
+      "image": null,
+      "createdAt": "2024-07-18T10:45:00.000Z",
+      "updatedAt": "2025-11-29T13:00:00.000Z"
+    },
+    {
+      "id": "cprop00000000000000000003",
+      "orgId": "cgalaxy000000000000000001",
+      "name": "Beacon Hill Duplex",
+      "address": "221 Beacon St, Boston, MA 02116",
+      "status": "occupied",
+      "type": "single-family",
+      "rent": 0,
+      "rentDay": 1,
+      "startMonth": 1,
+      "unitCount": 2,
+      "image": null,
+      "createdAt": "2024-09-22T15:10:00.000Z",
+      "updatedAt": "2026-01-14T08:30:00.000Z"
+    }
+  ],
+  "units": [
+    { "id": "cunit00000000000000000001", "propertyId": "cprop00000000000000000001", "label": "101" },
+    { "id": "cunit00000000000000000002", "propertyId": "cprop00000000000000000001", "label": "102" },
+    { "id": "cunit00000000000000000003", "propertyId": "cprop00000000000000000001", "label": "201" },
+    { "id": "cunit00000000000000000004", "propertyId": "cprop00000000000000000001", "label": "204" },
+    { "id": "cunit00000000000000000005", "propertyId": "cprop00000000000000000002", "label": "A" },
+    { "id": "cunit00000000000000000006", "propertyId": "cprop00000000000000000002", "label": "B" },
+    { "id": "cunit00000000000000000007", "propertyId": "cprop00000000000000000002", "label": "C" },
+    { "id": "cunit00000000000000000008", "propertyId": "cprop00000000000000000003", "label": "Upper" },
+    { "id": "cunit00000000000000000009", "propertyId": "cprop00000000000000000003", "label": "Lower" }
+  ],
+  "tenants": [
+    {
+      "id": "ctenant00000000000000001",
+      "propertyId": "cprop00000000000000000001",
+      "name": "Marcus Alvarez",
+      "email": "marcus.alvarez@example.com",
+      "phone": "+15715550201",
+      "createdAt": "2024-06-05T12:00:00.000Z",
+      "updatedAt": "2025-10-12T09:10:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000002",
+      "propertyId": "cprop00000000000000000001",
+      "name": "Priya Nair",
+      "email": "priya.nair@example.com",
+      "phone": "+15715550202",
+      "createdAt": "2024-06-10T12:00:00.000Z",
+      "updatedAt": "2025-08-04T11:30:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000003",
+      "propertyId": "cprop00000000000000000001",
+      "name": "Daniel Park",
+      "email": "daniel.park@example.com",
+      "phone": "+15715550203",
+      "createdAt": "2024-06-15T12:00:00.000Z",
+      "updatedAt": "2025-12-01T16:45:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000004",
+      "propertyId": "cprop00000000000000000001",
+      "name": "Gavin Huang",
+      "email": "gavin.huang@example.com",
+      "phone": "+15715550204",
+      "createdAt": "2024-06-20T12:00:00.000Z",
+      "updatedAt": "2025-09-11T09:20:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000005",
+      "propertyId": "cprop00000000000000000002",
+      "name": "Sarah Okafor",
+      "email": "sarah.okafor@example.com",
+      "phone": "+12025550301",
+      "createdAt": "2024-07-20T10:00:00.000Z",
+      "updatedAt": "2025-12-15T14:00:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000006",
+      "propertyId": "cprop00000000000000000002",
+      "name": "Thomas Delgado",
+      "email": "thomas.delgado@example.com",
+      "phone": "+12025550302",
+      "createdAt": "2024-07-22T10:00:00.000Z",
+      "updatedAt": "2025-11-02T14:00:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000007",
+      "propertyId": "cprop00000000000000000002",
+      "name": "Jessica Kim",
+      "email": "jessica.kim@example.com",
+      "phone": "+12025550303",
+      "createdAt": "2024-07-28T10:00:00.000Z",
+      "updatedAt": "2026-01-05T08:30:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000008",
+      "propertyId": "cprop00000000000000000003",
+      "name": "Leon Whitaker",
+      "email": "leon.whitaker@example.com",
+      "phone": "+16175550401",
+      "createdAt": "2024-09-30T10:00:00.000Z",
+      "updatedAt": "2025-12-22T10:00:00.000Z"
+    },
+    {
+      "id": "ctenant00000000000000009",
+      "propertyId": "cprop00000000000000000003",
+      "name": "Amelia Chen",
+      "email": "amelia.chen@example.com",
+      "phone": "+16175550402",
+      "createdAt": "2024-10-02T10:00:00.000Z",
+      "updatedAt": "2025-10-30T10:00:00.000Z"
+    },
+    {
+      "__comment_dup": "Duplicate of tenant 001 by phone — same (orgId=galaxy, phone=+15715550201). The migrator's dedup rule must keep the most recently updated tenant; this row has updatedAt LATER than tenant 001, so it should win.",
+      "id": "ctenant00000000000000010",
+      "propertyId": "cprop00000000000000000001",
+      "name": "Marcus J. Alvarez",
+      "email": "marcus.alvarez+new@example.com",
+      "phone": "+15715550201",
+      "createdAt": "2024-06-05T12:00:00.000Z",
+      "updatedAt": "2026-02-01T12:00:00.000Z"
+    }
+  ],
+  "leases": [
+    {
+      "id": "clease00000000000000001",
+      "propertyId": "cprop00000000000000000001",
+      "tenantId": "ctenant00000000000000001",
+      "unitLabel": "101",
+      "startDate": "2024-07-01T00:00:00.000Z",
+      "endDate": "2026-06-30T00:00:00.000Z",
+      "rentAmount": 2100,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000002",
+      "propertyId": "cprop00000000000000000001",
+      "tenantId": "ctenant00000000000000002",
+      "unitLabel": "102",
+      "startDate": "2024-07-01T00:00:00.000Z",
+      "endDate": "2026-06-30T00:00:00.000Z",
+      "rentAmount": 2050,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000003",
+      "propertyId": "cprop00000000000000000001",
+      "tenantId": "ctenant00000000000000003",
+      "unitLabel": "201",
+      "startDate": "2024-08-01T00:00:00.000Z",
+      "endDate": "2026-07-31T00:00:00.000Z",
+      "rentAmount": 2200,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000004",
+      "propertyId": "cprop00000000000000000001",
+      "tenantId": "ctenant00000000000000004",
+      "unitLabel": "204",
+      "startDate": "2024-09-01T00:00:00.000Z",
+      "endDate": "2026-08-31T00:00:00.000Z",
+      "rentAmount": 2400,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000005",
+      "propertyId": "cprop00000000000000000002",
+      "tenantId": "ctenant00000000000000005",
+      "unitLabel": "A",
+      "startDate": "2024-08-15T00:00:00.000Z",
+      "endDate": "2026-08-14T00:00:00.000Z",
+      "rentAmount": 2800,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000006",
+      "propertyId": "cprop00000000000000000002",
+      "tenantId": "ctenant00000000000000006",
+      "unitLabel": "B",
+      "startDate": "2024-08-15T00:00:00.000Z",
+      "endDate": "2026-08-14T00:00:00.000Z",
+      "rentAmount": 2750,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000007",
+      "propertyId": "cprop00000000000000000002",
+      "tenantId": "ctenant00000000000000007",
+      "unitLabel": "C",
+      "startDate": "2024-09-01T00:00:00.000Z",
+      "endDate": "2026-08-31T00:00:00.000Z",
+      "rentAmount": 2900,
+      "status": "active"
+    },
+    {
+      "id": "clease00000000000000008",
+      "propertyId": "cprop00000000000000000003",
+      "tenantId": "ctenant00000000000000008",
+      "unitLabel": "Upper",
+      "startDate": "2024-10-01T00:00:00.000Z",
+      "endDate": "2025-09-30T00:00:00.000Z",
+      "rentAmount": 3400,
+      "status": "expired"
+    },
+    {
+      "id": "clease00000000000000009",
+      "propertyId": "cprop00000000000000000003",
+      "tenantId": "ctenant00000000000000009",
+      "unitLabel": "Lower",
+      "startDate": "2024-10-05T00:00:00.000Z",
+      "endDate": "2026-10-04T00:00:00.000Z",
+      "rentAmount": 3100,
+      "status": "active"
+    },
+    {
+      "__comment_orphan": "Orphan lease — references tenant that does not exist in this dump. The migrator must log + skip, not fail.",
+      "id": "clease00000000000000010",
+      "propertyId": "cprop00000000000000000001",
+      "tenantId": "cGHOST0000000000000000001",
+      "unitLabel": "101",
+      "startDate": "2023-01-01T00:00:00.000Z",
+      "endDate": "2024-01-01T00:00:00.000Z",
+      "rentAmount": 1800,
+      "status": "terminated"
+    }
+  ],
+  "workOrders": [
+    {
+      "id": "cwo00000000000000000001",
+      "orgId": "cgalaxy000000000000000001",
+      "propertyId": "cprop00000000000000000001",
+      "unitLabel": "101",
+      "tenantId": "ctenant00000000000000001",
+      "title": "Kitchen faucet leaking under sink",
+      "status": "Open",
+      "priority": "normal",
+      "category": "plumbing",
+      "createdAt": "2026-04-15T08:12:00.000Z",
+      "updatedAt": "2026-04-15T08:12:00.000Z"
+    },
+    {
+      "id": "cwo00000000000000000002",
+      "orgId": "cgalaxy000000000000000001",
+      "propertyId": "cprop00000000000000000001",
+      "unitLabel": "204",
+      "tenantId": "ctenant00000000000000004",
+      "title": "HVAC not cooling above 3rd floor",
+      "status": "InProgress",
+      "priority": "urgent",
+      "category": "hvac",
+      "createdAt": "2026-04-10T10:40:00.000Z",
+      "updatedAt": "2026-04-18T11:22:00.000Z"
+    },
+    {
+      "id": "cwo00000000000000000003",
+      "orgId": "cgalaxy000000000000000001",
+      "propertyId": "cprop00000000000000000002",
+      "unitLabel": "C",
+      "tenantId": "ctenant00000000000000007",
+      "title": "Front door deadbolt sticking",
+      "status": "Completed",
+      "priority": "low",
+      "category": "security",
+      "createdAt": "2026-03-22T09:00:00.000Z",
+      "updatedAt": "2026-03-30T16:15:00.000Z"
+    },
+    {
+      "id": "cwo00000000000000000004",
+      "orgId": "cgalaxy000000000000000001",
+      "propertyId": "cprop00000000000000000003",
+      "unitLabel": "Lower",
+      "tenantId": "ctenant00000000000000009",
+      "title": "Dishwasher drain clogged",
+      "status": "Assigned",
+      "priority": "normal",
+      "category": "appliances",
+      "createdAt": "2026-04-18T13:00:00.000Z",
+      "updatedAt": "2026-04-19T08:00:00.000Z"
+    },
+    {
+      "id": "cwo00000000000000000005",
+      "orgId": "cgalaxy000000000000000001",
+      "propertyId": "cprop00000000000000000002",
+      "unitLabel": "A",
+      "tenantId": "ctenant00000000000000005",
+      "title": "Smoke detector beeping every 30s",
+      "status": "Open",
+      "priority": "emergency",
+      "category": "security",
+      "createdAt": "2026-04-21T22:05:00.000Z",
+      "updatedAt": "2026-04-21T22:05:00.000Z"
+    }
+  ]
+}

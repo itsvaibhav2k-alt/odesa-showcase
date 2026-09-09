@@ -1,0 +1,190 @@
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # (a) The real integration gate: a live local Supabase, migrations + seed
+  #     applied, exercising the security- and money-critical specs against
+  #     Postgres. These are pure supabase-js specs (no browser, no web server),
+  #     so BASE_URL short-circuits playwright.config's managed webServer.
+  #     ZERO skips tolerated here — a skip means the DB wiring silently broke.
+  # ---------------------------------------------------------------------------
+  auth-integration:
+    name: Auth + Supabase integration (RLS · roles · Stripe reconciliation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Reset database (migrations + seed)
+        run: supabase db reset
+
+      - name: Export Supabase env for the specs
+        # The specs read SUPABASE_URL / SUPABASE_ANON_KEY /
+        # SUPABASE_SERVICE_ROLE_KEY (see e2e/supabase/rls.spec.ts). Map them
+        # from the running local stack's `status -o env` (API_URL / ANON_KEY /
+        # SERVICE_ROLE_KEY) into the job env for later steps.
+        run: |
+          eval "$(supabase status -o env)"
+          {
+            echo "SUPABASE_URL=$API_URL"
+            echo "SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+
+      # No Playwright browser install: these specs never open a page — they
+      # talk straight to Postgres via supabase-js — so no chromium is launched.
+
+      - name: Run Supabase + reconciliation specs (serial, no web server)
+        # BASE_URL set => playwright.config skips its managed webServer.
+        env:
+          BASE_URL: http://localhost:9999
+          TEST_HOOKS_SECRET: ci-auth-integration-no-server
+        run: >
+          npx playwright test
+          e2e/supabase
+          e2e/financials/stripe-reconciliation.spec.ts
+          --project=chromium
+          --no-deps
+          --workers=1
+
+      - name: Assert zero skips (this job HAS a database)
+        # No --allow: any skip is a failure. require-executed proves the
+        # suites actually collected and ran rather than silently matching
+        # nothing.
+        run: >
+          node scripts/assert-no-unexpected-playwright-skips.mjs
+          playwright-results.json
+          --require-executed 'supabase/'=1
+          --require-executed 'stripe-reconciliation'=1
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-auth-integration
+          path: playwright-report/
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # (b) Public browser smoke, sharded. This job has NO Supabase. Every
+  #     authenticated suite gates its tests on HAVE_SUPABASE (defined in
+  #     e2e/today/helpers.ts, e2e/settings/helpers.ts, e2e/supabase/rls.spec.ts,
+  #     etc. as Boolean(SUPABASE_URL && SERVICE_ROLE_KEY && ANON_KEY)) and would
+  #     only emit skips here — the exact "green while testing nothing" failure
+  #     this gate exists to kill. So we run ONLY the intentionally DB-less
+  #     browser suite, e2e/smoke.spec.ts (its own header: "intentionally avoid
+  #     touching Supabase"). The Supabase-dependent specs are covered for real
+  #     by the auth-integration job above. The skip-gate then guarantees nothing
+  #     in this job passed-by-skipping (aside from the allowlisted env-gated
+  #     opt-ins like RUN_LIVE_AI).
+  # ---------------------------------------------------------------------------
+  playwright:
+    name: Playwright public smoke (shard ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      # Measured on run 29109188392: the managed webServer's `next build`
+      # OOMs the default heap on hosted runners (Node 22). Bounded bump
+      # per the release-readiness handoff (apply only where measured).
+      NODE_OPTIONS: --max-old-space-size=4096
+      # Stable local-only credential shared by the Playwright runner and its
+      # managed build/start subprocess. This is not a deployment secret.
+      TEST_HOOKS_SECRET: ci-managed-local-hooks
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Install Playwright chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run public (DB-less) Playwright suites
+        # Dummy, non-secret env lets `next build && next start` (the config's
+        # managed webServer) boot: src/lib/env.ts validates required vars at
+        # startup. No auth cookies exist, so supabase.auth.getUser() in
+        # middleware returns null without dialing Supabase and /today redirects
+        # to /login as smoke expects.
+        env:
+          CI: 'true'
+          NEXT_PUBLIC_SUPABASE_URL: https://dummy.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key
+          ANTHROPIC_API_KEY: dummy-anthropic-key
+          RETELL_API_KEY: dummy-retell-key
+          LINQ_API_KEY_ID: dummy-linq-id
+          LINQ_API_SECRET_KEY: dummy-linq-secret
+          LINQ_WEBHOOK_SECRET: dummy-linq-webhook
+        run: >
+          npx playwright test e2e/smoke.spec.ts
+          --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+
+      - name: Assert no unexpected skips
+        # --allow whitelists intentional env-gated opt-ins (e.g. the RUN_LIVE_AI
+        # live-Claude smoke). No --require-executed: a shard may legitimately
+        # collect 0 tests once smoke is split four ways.
+        run: >
+          node scripts/assert-no-unexpected-playwright-skips.mjs
+          playwright-results.json
+          --allow 'RUN_LIVE_AI'
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-shard-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Upload traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-shard-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 7

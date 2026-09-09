@@ -1,0 +1,54 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      # Bundle minor/patch bumps for the Next/React stack into one PR to
+      # keep review load manageable. Majors still open individually so
+      # they can get a manual breaking-change review.
+      nextjs-stack:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - minor
+          - patch
+      testing-stack:
+        patterns:
+          - "@playwright/test"
+          - "vitest"
+          - "@vitejs/*"
+          - "@testing-library/*"
+          - "jsdom"
+        update-types:
+          - minor
+          - patch
+      sentry:
+        patterns:
+          - "@sentry/*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: "09:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - ci

@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-gates:
+    name: Static gates (lint · typecheck · unit · build · manifests)
+    runs-on: ubuntu-latest
+    env:
+      # Measured on run 29109188407: tsc OOMs the default heap on the
+      # 7 GB hosted runner even on Node 22. Bounded bump per the
+      # release-readiness handoff (apply only where measured).
+      NODE_OPTIONS: --max-old-space-size=4096
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22: a dependency requires >=22 and Node 20 OOMs during
+      # `tsc --noEmit` / `next build`. Matches .nvmrc and package.json engines.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests (vitest)
+        run: npm test
+
+      - name: Build
+        # Dummy, non-secret env so `next build` has every var the app reads
+        # at build/startup. Real secrets are never needed to compile —
+        # Supabase / Anthropic / Linq / Retell are only hit at runtime.
+        # src/lib/env.ts validates these at server startup (instrumentation),
+        # and NEXT_PUBLIC_SUPABASE_URL must be a valid URL (zod .url()).
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://dummy.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+          SUPABASE_SERVICE_ROLE_KEY: dummy-service-role-key
+          ANTHROPIC_API_KEY: dummy-anthropic-key
+          RETELL_API_KEY: dummy-retell-key
+          LINQ_API_KEY_ID: dummy-linq-id
+          LINQ_API_SECRET_KEY: dummy-linq-secret
+          LINQ_WEBHOOK_SECRET: dummy-linq-webhook
+        run: npm run build
+
+      - name: Route manifest in sync
+        run: node scripts/check-route-manifest.mjs
+
+      - name: No Agent SDK leak into the Vercel bundle
+        run: npm run check:sdk-leak

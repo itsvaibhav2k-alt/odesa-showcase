@@ -1,0 +1,4 @@
+Property,Property Address,Unit,Tenant Name,Tenant Phone,Tenant Email,Rent Amount,Lease Start,Lease End,Lease Status,Rent Due Day,Bedrooms,Bathrooms
+Vaba House,"123 Main St, Arlington, VA 22201",1,Test Person,(202) 555-0101,test@example.com,1800,2025-06-01,2026-05-31,active,1,2,1
+Vaba House,"123 Main St, Arlington, VA 22201",2,Maria Sanchez,703-555-0102,maria@example.com,1950,2025-09-01,2026-08-31,active,1,2,1
+Springfield Duplex,"55 Elm St, Springfield, VA 22150",A,Jordan Lee,7035550103,jordan@example.com,2100,2024-12-15,2025-12-14,active,15,3,2
