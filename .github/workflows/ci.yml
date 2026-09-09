@@ -25,7 +25,7 @@ jobs:
 
       # Node 22: a dependency requires >=22 and Node 20 OOMs during
       # `tsc --noEmit` / `next build`. Matches .nvmrc and package.json engines.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
